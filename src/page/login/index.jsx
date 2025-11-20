@@ -36,13 +36,7 @@ const Login = () => {
   };
 
   return (
-    <form className="login__form"
-      onSubmit={handleSubmit}
-      style={{
-        maxWidth: 400,
-        margin: "0 auto",
-      }}
-    >
+    <form className="login__form" onSubmit={handleSubmit}>
       <div style={{ marginBottom: 20 }}>
         <label>Login</label>
         <div
