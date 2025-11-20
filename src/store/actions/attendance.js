@@ -27,3 +27,36 @@ export const AttendanceRespPost = createAsyncThunk("AttendanceRespPost", async (
         return rejectWithValue(error.response.data)
     }
 });
+export const AttendanceMonthClasses = createAsyncThunk("AttendanceMonthClasses", async (classesData, {
+    rejectWithValue
+}) => {
+    try {
+        const data = await Attendance.AttendanceMonth(classesData);
+        return data
+
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+});
+export const AttendanceSmena = createAsyncThunk("AttendanceSmena", async (userData, {
+    rejectWithValue
+}) => {
+    try {
+        const data = await Attendance.AttendanceSchoolSmena(userData);
+        return data
+
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+});
+export const AttendanceSmenaNew = createAsyncThunk("AttendanceSmenaNew", async (userData, {
+    rejectWithValue
+}) => {
+    try {
+        const data = await Attendance.AttendanceSchoolNew(userData);
+        return data
+
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+});

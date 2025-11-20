@@ -3,11 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { DeleteTeacher, GetTeacher } from "../../store/actions/teachers";
 import { getLocalStorage } from "../../libs/localStorage";
 import { useNavigate } from "react-router-dom";
+import { toastSuccess } from "../../utils/toast";
 
 const TeacherTable = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { teachersData } = useSelector((state) => state.teachers);
+  const { teachersData, teachersDelete, loading } = useSelector(
+    (state) => state.teachers
+  );
   const [openIndex, setOpenIndex] = useState(null);
 
   const toggleDropdown = (index) => {
@@ -16,6 +19,7 @@ const TeacherTable = () => {
 
   const handleDelete = (id) => {
     dispatch(DeleteTeacher(id)).then(() => {
+      toastSuccess("O'qituvchi muvaffaqiyatli o'chirildi");
       dispatch(GetTeacher(getLocalStorage("school")));
     });
   };
@@ -32,11 +36,13 @@ const TeacherTable = () => {
   }, []);
 
   useEffect(() => {
+    if (teachersDelete?.message) {
+    }
     dispatch(GetTeacher(getLocalStorage("school")));
   }, [dispatch]);
 
   return (
-    <div className="table-wrapper">
+    <div className="table__wrapper">
       <table className="teacher-table">
         <thead>
           <tr>
@@ -74,7 +80,9 @@ const TeacherTable = () => {
                   </button>
                   {openIndex === index && (
                     <ul className="dropdown-content">
-                      <li onClick={() => navigate("teachers/edit")}>
+                      <li
+                        onClick={() => navigate(`/teachers/edit/${teacher.id}`)}
+                      >
                         <i className="fa-solid fa-pen"></i> Edit
                       </li>
                       <li onClick={() => handleDelete(teacher.id)}>

@@ -2,33 +2,33 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BoxElement from "../../components/Box";
 import Breadcrumb from "../../components/Breadcrumb";
-import { PostTeacher } from "../../store/actions/teachers";
 import { toastError, toastSuccess } from "../../utils/toast";
 import { getLocalStorage } from "../../libs/localStorage";
 import { useNavigate } from "react-router-dom";
+import { PostStudents } from "../../store/actions/students";
+import { ClassesGet } from "../../store/actions/classes";
 
-export default function TeachersAdd() {
+export default function StudentsAdd() {
+  const dispatch = useDispatch();
+  const { dataClasses } = useSelector((state) => state.classes);
+  const navigate = useNavigate();
+
   const breadcrumbPaths = [
     { label: "Asosiy sahifa", link: "/" },
-    { label: "O'qituvchilar", link: "/teachers" },
-    { label: "O'qituvchi qo'shish" },
+    { label: "O'quvchilar", link: "/students" },
+    { label: "O'quvchi qo'shish" },
   ];
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { teachersAdd } = useSelector((state) => state.teachers);
   const [preview, setPreview] = useState(null);
   const [formData, setFormData] = useState({
-    school: "",
     name: "",
     jinsi: "",
     tug_sana: "",
     address: "",
     phone: "",
-    email: "",
-    category: "",
-    datapriyoma: "",
-    primech: "",
+    qarindoshi: "",
+    qarindoshi_phone: "",
+    sinf: "",
+    person_id: "",
     image: null,
   });
 
@@ -37,11 +37,10 @@ export default function TeachersAdd() {
     { label: "Jinsi", name: "jinsi", type: "radio" },
     { label: "Tug'ilgan sana", name: "tug_sana", type: "date" },
     { label: "Manzil", name: "address", type: "text" },
-    { label: "Telefon raqam", name: "phone", type: "number" },
-    { label: "Email", name: "email", type: "text" },
-    { label: "Kategoriya", name: "category", type: "text" },
-    { label: "Ishga qabul qilingan sana", name: "datapriyoma", type: "date" },
-    { label: "Eslatma", name: "primech", type: "text" },
+    { label: "Telefon raqam", name: "phone", type: "text" },
+    { label: "Qarindoshi", name: "qarindoshi", type: "text" },
+    { label: "Qarindoshi tel", name: "qarindoshi_phone", type: "text" },
+    { label: "Sinf", name: "sinf", type: "select" },
   ];
 
   const handleSubmit = async (e) => {
@@ -59,14 +58,15 @@ export default function TeachersAdd() {
     });
 
     try {
-      await dispatch(
-        PostTeacher({
-          userId: getLocalStorage("school"),
-          userData: data,
-        })
-      );
-      toastSuccess("O'qituvchi muvaffaqiyatli qo'shildi!");
-      navigate("/teachers");
+      console.log({
+        schoolId: getLocalStorage("school"),
+        pupilData: data,
+      });
+
+      await dispatch(PostStudents(data));
+
+      toastSuccess("O'quvchi muvaffaqiyatli qo'shildi!");
+      navigate("/students");
     } catch (error) {
       toastError("Xatolik yuz berdi. Iltimos, qayta urinib ko'ring.");
     }
@@ -88,26 +88,29 @@ export default function TeachersAdd() {
       setFormData({ ...formData, [name]: value });
     }
   };
+
   const handleRemove = () => {
     setPreview(null);
     setFormData({ ...formData, image: null });
     document.getElementById("fileInput").value = null;
   };
-
+  useEffect(() => {
+    dispatch(ClassesGet(getLocalStorage("school")));
+  }, []);
   return (
-    <div className="teachers">
-      <Breadcrumb title={"O'qituvchi qo'shish"} paths={breadcrumbPaths} />
+    <div className="students">
+      <Breadcrumb title={"O'quvchi qo'shish"} paths={breadcrumbPaths} />
 
       <BoxElement>
         <form
           onSubmit={handleSubmit}
           encType="multipart/form-data"
-          className="teacher__form"
+          className="students__form"
         >
           <div className="image-upload-container">
             <label htmlFor="fileInput" className="image-preview">
               {preview ? (
-                <img className="teacher__img" src={preview} alt="Preview" />
+                <img className="student__img" src={preview} alt="Preview" />
               ) : (
                 <i className="fa-regular fa-image"></i>
               )}
@@ -131,11 +134,8 @@ export default function TeachersAdd() {
                 O'chirish
               </button>
             </div>
-            {/* 
-            <p className="image-upload-info">
-              Upload image size 4MB, Format JPG, PNG, SVG
-            </p> */}
           </div>
+
           <div className="teachers__form-block">
             {fields.map(({ label, name, type }) => {
               if (type === "radio") {
@@ -170,8 +170,30 @@ export default function TeachersAdd() {
                 );
               }
 
+              if (type === "select") {
+                return (
+                  <label key={name} className="teachers__form-label">
+                    {label}
+                    <select
+                      className="students__form-select"
+                      name={name}
+                      value={formData[name]}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Sinfni tanlang</option>
+                      {dataClasses?.map((classes, index) => (
+                        <option key={index} value={classes.id}>
+                          {classes.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                );
+              }
+
               return (
-                <label key={name} className="teachers__form-label">
+                <label className="teachers__form-label" key={name}>
                   {label}
                   <input
                     className="teachers__form-input"
@@ -186,7 +208,8 @@ export default function TeachersAdd() {
               );
             })}
           </div>
-          <button className="teacher__add-btn" type="submit">
+
+          <button className="teachers__add-btn" type="submit">
             Qo'shish
           </button>
         </form>

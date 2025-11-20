@@ -1,8 +1,7 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
-import Button from "../button";
 import { useState } from "react";
-import BoxElement from "../Box";
 import { getLocalStorage, setLocalStorage } from "../../libs/localStorage";
+import Button from "../Button";
 
 export default function Sidebar() {
   const [profileClick, setProfileClick] = useState(false);
@@ -69,11 +68,12 @@ export default function Sidebar() {
               className={
                 isOpen ? "sidebar__link" : "sidebar__link sidebar__link-show"
               }
-              to="/students"
+              to="/month-attendance"
             >
               {isOpen ? (
                 <>
-                  <i className="fa-solid fa-table-cells-large"></i> O'quvchilar
+                  <i className="fa-solid fa-table-cells-large"></i> Oylik
+                  davomat
                 </>
               ) : (
                 <i className="fa-solid fa-table-cells-large"></i>
@@ -96,12 +96,28 @@ export default function Sidebar() {
               )}
             </NavLink>
           </li>
+          <li className="sidebar__item">
+            <NavLink
+              className={
+                isOpen ? "sidebar__link" : "sidebar__link sidebar__link-show"
+              }
+              to={"/attendance"}
+            >
+              {isOpen ? (
+                <>
+                  <i className="fa-solid fa-table-cells-large"></i> Smenalar
+                </>
+              ) : (
+                <i className="fa-solid fa-table-cells-large"></i>
+              )}
+            </NavLink>
+          </li>
         </ul>
       </div>
       <div className="sidebar__right">
         <header>
           <Button
-            clasButton={"header__button"}
+            classButton={"header__button"}
             onClickButton={() => handleProfileClick()}
           >
             <img
@@ -111,7 +127,9 @@ export default function Sidebar() {
             />
           </Button>
         </header>
-        <Outlet />
+        <div className="outlet__container">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

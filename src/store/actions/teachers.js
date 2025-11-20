@@ -29,17 +29,43 @@ export const PostTeacher = createAsyncThunk("PostTeacher", async ({
         return rejectWithValue(error.response.data)
     }
 });
-export const EditTeacher = createAsyncThunk("EditTeacher", async (
-    userData, {
+export const EditTeacher = createAsyncThunk(
+    "EditTeacher",
+    async (
+        userData, {
+            rejectWithValue
+        }) => {
+
+        try {
+            const data = await Teachers.TeachersEdit(
+                userData,
+            );
+            return data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+export const EditTeacherImage = createAsyncThunk(
+    "EditTeacherImage",
+    async ({
+        id,
+        image
+    }, {
         rejectWithValue
     }) => {
-    try {
-        const data = await Teachers.TeachersEdit(userData);
-        return data
-    } catch (error) {
-        return rejectWithValue(error.response.data)
+        try {
+            const formData = new FormData();
+            formData.append("image", image);
+
+            const data = await Teachers.TeachersEditImage(id, formData);
+            return data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
     }
-});
+);
+
 export const DeleteTeacher = createAsyncThunk("DeleteTeacher", async (userId, {
     rejectWithValue
 }) => {

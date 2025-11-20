@@ -13,6 +13,13 @@ export const Teachers = {
         const response = await api.put(`/api/v1/editteacher/`, userData);
         return response.data;
     },
+    async TeachersEditImage({
+        id,
+        userData
+    }) {
+        const response = await api.put(`/api/v1/addteacherimage/`, userData);
+        return response.data;
+    },
     async TeachersDelete(userId) {
         const response = await api.delete(`/api/v1/deleteteacher/${userId}/`);
         return response.data;
