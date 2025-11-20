@@ -58,6 +58,13 @@ a {
   list-style: none;
 }
 
+
+.login__form {
+margin-top: 200px;
+
+
+}
+
 .loader {
   width: 17px;
   height: 17px;

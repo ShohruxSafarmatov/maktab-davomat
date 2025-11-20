@@ -36,7 +36,7 @@ const Login = () => {
   };
 
   return (
-    <form
+    <form className="login__form"
       onSubmit={handleSubmit}
       style={{
         maxWidth: 400,
